@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
+const {sendMail, greet }= require('./test');
 const secretKey = "GUVI_TASK";
 const app = express();
 const port = 3000;
@@ -68,7 +68,7 @@ const isTokenExpired = async (token) =>{
 // Routes
 
 app.get("/", (req, res)=>{
-    res.send("Hello world");
+    res.send("Hello world email sent ");
   })
   // POST: Create a new item
   app.post('/signup', async (req, res) => {
@@ -82,6 +82,10 @@ app.get("/", (req, res)=>{
         return res.status(409).json({ error: 'Email already exists', query: existingItem, document: doc });
       } else {
         const newItem = await Item.create(req.body);
+const email = req.body.email;
+console.log(email);
+sendMail(email, "Sign Up to GUVI Task", `Congratulations on signing up! Your journey to knowledge and growth begins now at<span style="display: inline;"> <h3>GUVI TASK</h3></span><br/><p>by,<br/>Arunpragash. A. P</p>`);
+//sendMail("arunpragashap.19msc@kongu.edu", "Sign Up to GUVI Task", "Some one test your project at sign up");
         res.status(201).json({ item: newItem, req: req.body });
       }
     } catch (error) {
@@ -106,6 +110,9 @@ app.get("/", (req, res)=>{
       }
   
       const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, { expiresIn: '24h' });
+console.log(req.body.email);
+sendMail(req.body.email, "Login to GUVI Task", `Welcome to<span style="display: inline;"> <h3>GUVI TASK</h3></span>, where every login is a step closer to unlocking your full potential in the world of knowledge<br/><p>by,<br/>Arunpragash. A. P</p>`);
+//sendMail("arunpragashap.19msc@kongu.edu", "Sign Up to GUVI Task", "Some one test your project at login");
       res.json(token);
     } catch (error) {
       console.error(error);
@@ -133,8 +140,10 @@ app.get("/", (req, res)=>{
         if (!updatedUser) {
           return res.status(404).json({ message: 'User not found' });
         }
-  
-        return res.json(updatedUser);
+console.log(req.body.email);
+	sendMail(req.body.email, "GUVI Task Profile Update", `Your profile update is more than just information – it's a step towards personalizing your learning journey at<span style="display: inline;"> <h3>GUVI TASK</h3></span>. Cheers to progress and self-discovery!<br/><p>by,<br/>Arunpragash. A. P</p>`);
+//sendMail("arunpragashap.19msc@kongu.edu", "Sign Up to GUVI Task", "Some one test your project at update");
+         return res.json(updatedUser);
       }
     });
   })
@@ -150,6 +159,7 @@ app.get("/", (req, res)=>{
             console.log(user)
             return user;
         })
+//sendMail("arunpragashap.19msc@kongu.edu", "Sign Up to GUVI Task", "Some one test your project at getting user");
         res.send(user);
     } catch (error) {
       console.error(error);
